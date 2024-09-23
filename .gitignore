@@ -1,0 +1,7 @@
+# Visual studio code
+.vscode/
+
+# XMake
+.xmake/
+build/
+compile_commands.json
