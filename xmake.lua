@@ -50,23 +50,35 @@ add_rules("plugin.compile_commands.autoupdate", {outputdir = ".vscode"})
 add_repositories("my-xmake-repo https://github.com/zzxzzk115/xmake-repo.git dev")
 
 -- add requirements
-add_requires("argparse")
+add_requires("argparse", "libzip")
+
+-- target defination, name: j2me-asset-hunter-static-lib
+target("j2me-asset-hunter-static-lib")
+    -- set target kind: static lib
+    set_kind("static")
+
+    add_includedirs("include", { public = true })
+
+    -- add/remove header & source files
+    add_headerfiles("include/(j2me-asset-hunter/**.hpp)")
+    add_files("src/**.cpp")
+    remove_files("src/main.cpp")
+
+    -- add packages
+    add_packages("argparse", { public = true })
+    add_packages("libzip", { public = true })
 
 -- target defination, name: j2me-asset-hunter
 target("j2me-asset-hunter")
     -- set target kind: executable
     set_kind("binary")
 
-    add_includedirs(".", { public = true })
-
     add_includedirs("include", { public = true })
 
     -- add header & source files
-    add_headerfiles("include/(j2me-asset-hunter/**.hpp)")
-    add_files("src/**.cpp")
+    add_files("src/main.cpp")
 
-    -- add packages
-    add_packages("argparse", { public = true })
+    add_deps("j2me-asset-hunter-static-lib")
 
 -- if build examples, then include examples
 if has_config("examples") then
