@@ -50,7 +50,7 @@ add_rules("plugin.compile_commands.autoupdate", {outputdir = ".vscode"})
 add_repositories("my-xmake-repo https://github.com/zzxzzk115/xmake-repo.git dev")
 
 -- add requirements
-add_requires("argparse", "libzip")
+add_requires("argparse", "libzip", "fluidsynth")
 
 -- target defination, name: j2me-asset-hunter-static-lib
 target("j2me-asset-hunter-static-lib")
@@ -67,6 +67,7 @@ target("j2me-asset-hunter-static-lib")
     -- add packages
     add_packages("argparse", { public = true })
     add_packages("libzip", { public = true })
+    add_packages("fluidsynth", { public = true })
 
 -- target defination, name: j2me-asset-hunter
 target("j2me-asset-hunter")

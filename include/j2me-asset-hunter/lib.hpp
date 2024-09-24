@@ -41,33 +41,73 @@ namespace jhunter
         };
     } // namespace io
 
-    namespace png
+    namespace hunter
     {
-        struct PngFile
-        {
-            std::vector<char> buffer;
-        };
-
-        class PngHunter
+        template<typename FileType>
+        class HunterBase
         {
         public:
-            PngHunter() = default;
+            HunterBase() = default;
 
-            void addSourceBuffer(const std::vector<char>& buffer);
+            // Add a buffer to be searched
+            void addSourceBuffer(const std::vector<char>& buffer) { m_SourceBuffers.emplace_back(buffer); }
 
-            std::vector<PngFile> parsePngFiles() const;
-            void                 savePngFiles(const std::vector<PngFile>& pngFiles,
-                                              const std::string&          outputDir,
-                                              const std::string&          prefix) const;
+            // Pure virtual function to parse files from buffers, needs to be implemented by derived classes
+            virtual std::vector<FileType> parseFiles() const = 0;
 
-        private:
+            // Pure virtual function to save files
+            virtual void saveFiles(const std::vector<FileType>& files,
+                                   const std::string&           outputDir,
+                                   const std::string&           prefix) const = 0;
+
+        protected:
+            // Utility function to find a sequence of bytes in a buffer starting at a specific position
             size_t findSequenceInBuffer(const std::vector<char>& buffer, const std::string& seq, size_t startPos) const;
 
-        private:
-            std::vector<std::vector<char>> m_SourceBuffers;
+            std::vector<std::vector<char>> m_SourceBuffers; // Buffers to be scanned
         };
-    } // namespace png
 
-    namespace midi
-    {}
+        struct PngFile
+        {
+            std::vector<char> data;
+        };
+
+        class PngHunter : public HunterBase<PngFile>
+        {
+        public:
+            std::vector<PngFile> parseFiles() const override;
+            void                 saveFiles(const std::vector<PngFile>& pngFiles,
+                                           const std::string&          outputDir,
+                                           const std::string&          prefix) const override;
+        };
+
+        struct MidiFile
+        {
+            std::vector<char> data;
+        };
+
+        struct MidiHunterSettings
+        {
+            bool exportWAV = true;
+
+            std::string soundFontPath;
+        };
+
+        class MidiHunter : public HunterBase<MidiFile>
+        {
+        public:
+            std::vector<MidiFile> parseFiles() const override;
+            void                  saveFiles(const std::vector<MidiFile>& midiFiles,
+                                            const std::string&           outputDir,
+                                            const std::string&           prefix) const override;
+
+            void setSettings(const MidiHunterSettings& settings);
+
+        private:
+            void exportWAVFile(const std::string& midiFileName, const std::string& outputFileName) const;
+
+        private:
+            MidiHunterSettings m_Settings;
+        };
+    } // namespace hunter
 } // namespace jhunter
