@@ -74,6 +74,12 @@ target("j2me-asset-hunter")
     -- set target kind: executable
     set_kind("binary")
 
+    -- set values
+    set_values("asset_files", "assets/**")
+
+    -- add rules
+    add_rules("copy_assets")
+
     add_includedirs("include", { public = true })
 
     -- add header & source files
