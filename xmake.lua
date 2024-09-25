@@ -91,3 +91,28 @@ target("j2me-asset-hunter")
 if has_config("examples") then
     includes("examples")
 end
+
+-- pack
+includes("@builtin/xpack")
+
+xpack("j2me-asset-hunter")
+    set_title("J2ME Asset Hunter ($(arch)) by Lazy_V")
+    set_author("zzxzzk115@gmail.com")
+    set_maintainer("zzxzzk115@gmail.com")
+    set_copyright("Copyright (C) 2017-present, Lazy_V")
+    set_license("MIT")
+    set_licensefile("LICENSE")
+    set_homepage("https://github.com/zzxzzk115/j2me-asset-hunter")
+
+    set_formats("nsis", "zip", "srczip")
+    add_installfiles("(assets/**)", {prefixdir = "bin"})
+    add_sourcefiles("(include/**.hpp)")
+    add_sourcefiles("(src/**.cpp)")
+    add_targets("j2me-asset-hunter")
+    on_load(function (package)
+        if package:from_source() then
+            package:set("basename", "j2me-asset-hunter-$(plat)-src-v$(version)")
+        else
+            package:set("basename", "j2me-asset-hunter-$(plat)-$(arch)-v$(version)")
+        end
+    end)

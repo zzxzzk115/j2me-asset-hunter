@@ -1,10 +1,16 @@
 #include "j2me-asset-hunter/lib.hpp"
 
+#include <filesystem>
+
 int main(int argc, char* argv[])
 {
+    auto exePath    = std::filesystem::path(argv[0]);
+    auto workingDir = exePath.parent_path();
+
     argparse::ArgumentParser program("j2me-asset-hunter");
 
     program.add_argument("jar").help("a .jar file to handle with.");
+    program.add_argument("-o", "--output_dir").help("the output directory.").default_value("");
 
     try
     {
@@ -18,12 +24,19 @@ int main(int argc, char* argv[])
     }
 
     auto jarFilePath = program.get("jar");
+    auto jarFileName = std::filesystem::path(jarFilePath).stem().generic_string();
+
+    std::string outPath = program.get("-o");
+    if (outPath.empty())
+    {
+        outPath = jarFileName + "_out";
+    }
 
     jhunter::hunter::PngHunter pngHunter;
 
     jhunter::hunter::MidiHunter         midiHunter;
     jhunter::hunter::MidiHunterSettings midiSettings {};
-    midiSettings.soundFontPath = "assets/default.sf2";
+    midiSettings.soundFontPath = (workingDir / "assets/default.sf2").generic_string();
     midiHunter.setSettings(midiSettings);
 
     jhunter::io::ZipArchive archive(jarFilePath);
@@ -37,10 +50,10 @@ int main(int argc, char* argv[])
     }
 
     auto pngFiles = pngHunter.parseFiles();
-    pngHunter.saveFiles(pngFiles, "out", "image_");
+    pngHunter.saveFiles(pngFiles, outPath, "image_");
 
     auto midiFiles = midiHunter.parseFiles();
-    midiHunter.saveFiles(midiFiles, "out", "audio_");
+    midiHunter.saveFiles(midiFiles, outPath, "audio_");
 
     return 0;
 }
