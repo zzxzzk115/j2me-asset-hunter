@@ -12,7 +12,7 @@ flowchart LR
     E --> F["FluidSynth · WAV audio"]
 ```
 
-Recover images and MIDI from J2ME archives, with FluidSynth audio conversion. [Diagram source and validation notes](docs/showcase.md).
+Recover images and MIDI from J2ME archives, with FluidSynth audio conversion.
 
 ## Usage
 
