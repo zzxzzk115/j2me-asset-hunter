@@ -1,0 +1,6 @@
+flowchart LR
+    A["J2ME .jar"] --> B["Read ZIP entries"]
+    B --> C["Scan binary signatures"]
+    C --> D["Recovered PNG images"]
+    C --> E["Recovered MIDI"]
+    E --> F["FluidSynth · WAV audio"]
